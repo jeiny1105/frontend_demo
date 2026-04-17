@@ -96,7 +96,7 @@ function App() {
       <section className="registration-card">
         <div className="form-intro">
           <p className="eyebrow">Library Subscription</p>
-          <h1>Register for your reading membership</h1>
+          <h2>Register for your reading membership</h2>
           <p>
             Enter subscriber details and keep each registration listed below.
           </p>
