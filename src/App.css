@@ -49,6 +49,7 @@
 }
 
 .form-row:has(textarea),
+.plan-details,
 .terms,
 .form-actions {
   grid-column: 1 / -1;
@@ -87,6 +88,17 @@ textarea:focus {
   box-shadow: 0 0 0 1px var(--accent);
 }
 
+.date-picker {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.calendar-button {
+  padding-inline: 14px;
+  white-space: nowrap;
+}
+
 .terms {
   display: flex;
   align-items: center;
@@ -98,6 +110,58 @@ textarea:focus {
   width: 18px;
   height: 18px;
   flex: 0 0 auto;
+}
+
+.plan-details {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 18px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--plan-bg);
+}
+
+.plan-details h2 {
+  margin: 4px 0 0;
+  color: var(--accent-strong);
+}
+
+.plan-label {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.plan-grid div {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.plan-grid span,
+td small {
+  display: block;
+  color: var(--text-soft);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.plan-grid strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-h);
+  font-size: 15px;
+  line-height: 1.35;
 }
 
 .form-actions {
@@ -187,7 +251,7 @@ button:hover {
 
 table {
   width: 100%;
-  min-width: 1040px;
+  min-width: 1160px;
   border-collapse: collapse;
   background: var(--surface);
 }
@@ -210,6 +274,17 @@ th {
 td {
   color: var(--text);
   font-size: 16px;
+}
+
+.plan-pill {
+  display: inline-flex;
+  margin-bottom: 4px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  color: var(--accent-strong);
+  background: var(--accent-soft);
+  font-size: 13px;
+  font-weight: 800;
 }
 
 tbody tr {
@@ -265,6 +340,15 @@ tbody tr:last-child td {
   }
 
   .library-form {
+    grid-template-columns: 1fr;
+  }
+
+  .plan-details,
+  .plan-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .date-picker {
     grid-template-columns: 1fr;
   }
 

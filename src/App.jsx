@@ -8,15 +8,38 @@ const initialFormData = {
   password: '',
   address: '',
   membershipType: 'Student',
+  subscriptionPlan: 'Basic',
   readingInterests: '',
   startDate: '',
   agreeToTerms: false,
+}
+
+const subscriptionPlans = {
+  Basic: {
+    price: 'Rs. 199/month',
+    duration: 'Monthly',
+    borrowLimit: '2 books at a time',
+    benefits: 'Reading room access and standard book borrowing',
+  },
+  Premium: {
+    price: 'Rs. 499/month',
+    duration: 'Monthly',
+    borrowLimit: '5 books at a time',
+    benefits: 'Priority reservations, journals, and digital library access',
+  },
+  Annual: {
+    price: 'Rs. 4,999/year',
+    duration: 'Yearly',
+    borrowLimit: '8 books at a time',
+    benefits: 'Best value plan with events, archives, and premium support',
+  },
 }
 
 function App() {
   const [formData, setFormData] = useState(initialFormData)
   const [members, setMembers] = useState([])
   const [editingMemberId, setEditingMemberId] = useState(null)
+  const selectedPlan = subscriptionPlans[formData.subscriptionPlan]
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target
@@ -69,6 +92,7 @@ function App() {
       password: member.password,
       address: member.address,
       membershipType: member.membershipType,
+      subscriptionPlan: member.subscriptionPlan,
       readingInterests: member.readingInterests,
       startDate: member.startDate,
       agreeToTerms: member.agreeToTerms,
@@ -184,6 +208,45 @@ function App() {
           </div>
 
           <div className="form-row">
+            <label htmlFor="subscriptionPlan">Subscription Plan</label>
+            <select
+              id="subscriptionPlan"
+              name="subscriptionPlan"
+              value={formData.subscriptionPlan}
+              onChange={handleChange}
+            >
+              {Object.keys(subscriptionPlans).map((planName) => (
+                <option key={planName}>{planName}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="plan-details">
+            <div>
+              <p className="plan-label">Selected Plan</p>
+              <h2>{formData.subscriptionPlan}</h2>
+            </div>
+            <div className="plan-grid">
+              <div>
+                <span>Price</span>
+                <strong>{selectedPlan.price}</strong>
+              </div>
+              <div>
+                <span>Duration</span>
+                <strong>{selectedPlan.duration}</strong>
+              </div>
+              <div>
+                <span>Borrow Limit</span>
+                <strong>{selectedPlan.borrowLimit}</strong>
+              </div>
+              <div>
+                <span>Benefits</span>
+                <strong>{selectedPlan.benefits}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div className="form-row">
             <label htmlFor="readingInterests">Reading Interests</label>
             <input
               id="readingInterests"
@@ -197,14 +260,23 @@ function App() {
 
           <div className="form-row">
             <label htmlFor="startDate">Subscription Start Date</label>
-            <input
-              id="startDate"
-              name="startDate"
-              type="date"
-              value={formData.startDate}
-              onChange={handleChange}
-              required
-            />
+            <div className="date-picker">
+              <input
+                id="startDate"
+                name="startDate"
+                type="date"
+                value={formData.startDate}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className="calendar-button"
+                onClick={() => document.getElementById('startDate').showPicker()}
+              >
+                Open Calendar
+              </button>
+            </div>
           </div>
 
           <label className="terms">
@@ -257,6 +329,7 @@ function App() {
                   <th>Password</th>
                   <th>Address</th>
                   <th>Membership</th>
+                  <th>Plan</th>
                   <th>Interests</th>
                   <th>Start Date</th>
                   <th>Actions</th>
@@ -271,6 +344,10 @@ function App() {
                     <td>{'•'.repeat(Math.min(member.password.length, 10))}</td>
                     <td>{member.address}</td>
                     <td>{member.membershipType}</td>
+                    <td>
+                      <span className="plan-pill">{member.subscriptionPlan}</span>
+                      <small>{subscriptionPlans[member.subscriptionPlan].price}</small>
+                    </td>
                     <td>{member.readingInterests || 'Not specified'}</td>
                     <td>{member.startDate}</td>
                     <td>
