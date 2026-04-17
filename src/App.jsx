@@ -5,6 +5,7 @@ const initialFormData = {
   fullName: '',
   email: '',
   phone: '',
+  password: '',
   address: '',
   membershipType: 'Student',
   readingInterests: '',
@@ -14,7 +15,8 @@ const initialFormData = {
 
 function App() {
   const [formData, setFormData] = useState(initialFormData)
-  const [submittedMember, setSubmittedMember] = useState(null)
+  const [members, setMembers] = useState([])
+  const [editingMemberId, setEditingMemberId] = useState(null)
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target
@@ -33,7 +35,59 @@ function App() {
       return
     }
 
-    setSubmittedMember(formData)
+    if (editingMemberId) {
+      setMembers((currentMembers) =>
+        currentMembers.map((member) =>
+          member.id === editingMemberId
+            ? {
+                ...formData,
+                id: editingMemberId,
+              }
+            : member,
+        ),
+      )
+      setEditingMemberId(null)
+    } else {
+      setMembers((currentMembers) => [
+        ...currentMembers,
+        {
+          ...formData,
+          id: Date.now(),
+        },
+      ])
+    }
+
+    setFormData(initialFormData)
+  }
+
+  const handleEdit = (member) => {
+    setEditingMemberId(member.id)
+    setFormData({
+      fullName: member.fullName,
+      email: member.email,
+      phone: member.phone,
+      password: member.password,
+      address: member.address,
+      membershipType: member.membershipType,
+      readingInterests: member.readingInterests,
+      startDate: member.startDate,
+      agreeToTerms: member.agreeToTerms,
+    })
+  }
+
+  const handleDelete = (memberId) => {
+    setMembers((currentMembers) =>
+      currentMembers.filter((member) => member.id !== memberId),
+    )
+
+    if (editingMemberId === memberId) {
+      setEditingMemberId(null)
+      setFormData(initialFormData)
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setEditingMemberId(null)
     setFormData(initialFormData)
   }
 
@@ -44,8 +98,7 @@ function App() {
           <p className="eyebrow">Library Subscription</p>
           <h1>Register for your reading membership</h1>
           <p>
-            Fill in your details to create a subscription and get access to
-            books, journals, study spaces, and digital resources.
+            Enter subscriber details and keep each registration listed below.
           </p>
         </div>
 
@@ -85,6 +138,19 @@ function App() {
               value={formData.phone}
               onChange={handleChange}
               placeholder="Enter your phone number"
+              required
+            />
+          </div>
+
+          <div className="form-row">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Create a password"
               required
             />
           </div>
@@ -151,17 +217,84 @@ function App() {
             I agree to follow library rules and return borrowed books on time.
           </label>
 
-          <button type="submit">Submit Registration</button>
-        </form>
+          <div className="form-actions">
+            <button type="submit">
+              {editingMemberId ? 'Update Registration' : 'Submit Registration'}
+            </button>
 
-        {submittedMember && (
-          <div className="success-message">
-            <h2>Registration Successful</h2>
-            <p>
-              Welcome, {submittedMember.fullName}! Your{' '}
-              {submittedMember.membershipType.toLowerCase()} subscription has
-              been created.
-            </p>
+            {editingMemberId && (
+              <button
+                className="secondary-button"
+                type="button"
+                onClick={handleCancelEdit}
+              >
+                Cancel
+              </button>
+            )}
+          </div>
+        </form>
+      </section>
+
+      <section className="subscriptions">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Subscription Records</p>
+            <h2>Registered Subscribers</h2>
+          </div>
+          <span className="member-count">{members.length} total</span>
+        </div>
+
+        {members.length === 0 ? (
+          <p className="empty-table">No subscriptions registered yet.</p>
+        ) : (
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Password</th>
+                  <th>Address</th>
+                  <th>Membership</th>
+                  <th>Interests</th>
+                  <th>Start Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {members.map((member) => (
+                  <tr key={member.id}>
+                    <td>{member.fullName}</td>
+                    <td>{member.email}</td>
+                    <td>{member.phone}</td>
+                    <td>{'•'.repeat(Math.min(member.password.length, 10))}</td>
+                    <td>{member.address}</td>
+                    <td>{member.membershipType}</td>
+                    <td>{member.readingInterests || 'Not specified'}</td>
+                    <td>{member.startDate}</td>
+                    <td>
+                      <div className="table-actions">
+                        <button
+                          className="action-button update-button"
+                          type="button"
+                          onClick={() => handleEdit(member)}
+                        >
+                          Update
+                        </button>
+                        <button
+                          className="action-button delete-button"
+                          type="button"
+                          onClick={() => handleDelete(member.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </section>
